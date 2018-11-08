@@ -17,6 +17,8 @@ int main() {
   TF_SetAttrType(desc, "dtype", TF_FLOAT);
   TF_Operation *op = TF_FinishOperation(desc, status);
   CHECK(status);
+  printf("operation name = %s\n", TF_OperationName(op));
+  printf("operation type = %s\n", TF_OperationOpType(op));
   TF_SessionOptions *opts = TF_NewSessionOptions();
   TF_Session *session = TF_NewSession(graph, opts, status);
   CHECK(status);
