@@ -17,19 +17,22 @@ int main() {
   TF_SetAttrType(desc, "dtype", TF_FLOAT);
   TF_Operation *op = TF_FinishOperation(desc, status);
   CHECK(status);
-  printf("operation name = %s\n", TF_OperationName(op));
-  printf("operation type = %s\n", TF_OperationOpType(op));
-  printf("operation outpus = %d\n", TF_OperationNumOutputs(op));
-  TF_SessionOptions *opts = TF_NewSessionOptions();
-  TF_Session *session = TF_NewSession(graph, opts, status);
-  CHECK(status);
 
   TF_Output input;
   input.oper = op;
   input.index = 0;
 
+  TF_OperationDescription *desc2 = TF_NewOperation(graph, "Identity", "id");
+  TF_AddInput(desc2, input);
+  TF_Operation *id = TF_FinishOperation(desc2, status);
+  CHECK(status);
+
+  TF_SessionOptions *opts = TF_NewSessionOptions();
+  TF_Session *session = TF_NewSession(graph, opts, status);
+  CHECK(status);
+
   TF_Output out;
-  out.oper = op;
+  out.oper = id;
   out.index = 0;
 
   TF_Tensor *output;
@@ -39,6 +42,8 @@ int main() {
 
   TF_SessionRun(session, NULL, &input, &input_value, 1, &out, &output, 1, NULL, 0, NULL, status);
   CHECK(status);
+
+  printf("Result %f\n", *(float *)TF_TensorData(output));
 
   TF_DeleteTensor(input_value);
   TF_DeleteTensor(output);
