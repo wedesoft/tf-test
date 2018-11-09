@@ -28,12 +28,16 @@ int main() {
   input.oper = op;
   input.index = 0;
 
+  TF_Output out;
+  out.oper = op;
+  out.index = 0;
+
   TF_Tensor *output;
 
   TF_Tensor *input_value = TF_AllocateTensor(TF_FLOAT, NULL, 0, 4);
   ((float *)TF_TensorData(input_value))[0] = 3.0;
 
-  TF_SessionRun(session, NULL, &input, &input_value, 1, &input, &output, 1, NULL, 0, NULL, status);
+  TF_SessionRun(session, NULL, &input, &input_value, 1, &out, &output, 1, NULL, 0, NULL, status);
   CHECK(status);
 
   TF_DeleteTensor(input_value);
