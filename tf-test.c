@@ -15,21 +15,24 @@ int main() {
   TF_Graph *graph = TF_NewGraph();
   TF_OperationDescription *desc = TF_NewOperation(graph, "Placeholder", "x");
   TF_SetAttrType(desc, "dtype", TF_FLOAT);
-  TF_Operation *op = TF_FinishOperation(desc, status);
+  TF_Operation *x = TF_FinishOperation(desc, status);
   CHECK(status);
 
-  TF_Output input;
-  input.oper = op;
-  input.index = 0;
-
-  TF_OperationDescription *desc2 = TF_NewOperation(graph, "Identity", "id");
-  TF_AddInput(desc2, input);
-  TF_Operation *id = TF_FinishOperation(desc2, status);
+  TF_OperationDescription *id_desc = TF_NewOperation(graph, "Identity", "id");
+  TF_Output id_input;
+  id_input.oper = x;
+  id_input.index = 0;
+  TF_AddInput(id_desc, id_input);
+  TF_Operation *id = TF_FinishOperation(id_desc, status);
   CHECK(status);
 
   TF_SessionOptions *opts = TF_NewSessionOptions();
   TF_Session *session = TF_NewSession(graph, opts, status);
   CHECK(status);
+
+  TF_Output input;
+  input.oper = x;
+  input.index = 0;
 
   TF_Output out;
   out.oper = id;
