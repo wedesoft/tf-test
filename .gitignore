@@ -1,2 +1,5 @@
 tf-test
+ops
 *.o
+*.pb
+*.pbtxt
