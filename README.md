@@ -1,6 +1,6 @@
 # tf-test
 
-Tensorflow C-API example.
+Tensorflow C-API gradient example.
 
 ## See also
 
