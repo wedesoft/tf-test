@@ -18,12 +18,12 @@ int main() {
   TF_Operation *x = TF_FinishOperation(desc, status);
   CHECK(status);
 
-  TF_OperationDescription *id_desc = TF_NewOperation(graph, "Identity", "id");
-  TF_Output id_input;
-  id_input.oper = x;
-  id_input.index = 0;
-  TF_AddInput(id_desc, id_input);
-  TF_Operation *id = TF_FinishOperation(id_desc, status);
+  TF_OperationDescription *y_desc = TF_NewOperation(graph, "Square", "y");
+  TF_Output y_input;
+  y_input.oper = x;
+  y_input.index = 0;
+  TF_AddInput(y_desc, y_input);
+  TF_Operation *y = TF_FinishOperation(y_desc, status);
   CHECK(status);
 
   TF_SessionOptions *opts = TF_NewSessionOptions();
@@ -34,19 +34,29 @@ int main() {
   input.oper = x;
   input.index = 0;
 
-  TF_Output out;
-  out.oper = id;
-  out.index = 0;
+  TF_Output expression;
+  expression.oper = y;
+  expression.index = 0;
 
   TF_Tensor *output;
 
   TF_Tensor *input_value = TF_AllocateTensor(TF_FLOAT, NULL, 0, 4);
   ((float *)TF_TensorData(input_value))[0] = 3.0;
 
-  TF_SessionRun(session, NULL, &input, &input_value, 1, &out, &output, 1, NULL, 0, NULL, status);
+  TF_SessionRun(session, NULL, &input, &input_value, 1, &expression, &output, 1, NULL, 0, NULL, status);
   CHECK(status);
 
-  printf("Result %f\n", *(float *)TF_TensorData(output));
+  printf("x^2|x=3 = %f\n", *(float *)TF_TensorData(output));
+
+  TF_Output dy;
+
+  TF_AddGradients(graph, &expression, 1, &input, 1, NULL, status, &dy);
+  CHECK(status);
+
+  TF_SessionRun(session, NULL, &input, &input_value, 1, &dy, &output, 1, NULL, 0, NULL, status);
+  CHECK(status);
+
+  printf("dx^2/dx|x=3 = %f\n", *(float *)TF_TensorData(output));
 
   TF_DeleteTensor(input_value);
   TF_DeleteTensor(output);
