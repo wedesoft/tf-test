@@ -13,16 +13,17 @@ int main() {
   printf("Hello from TensorFlow C library version %s\n", TF_Version());
   TF_Status *status = TF_NewStatus();
   TF_Graph *graph = TF_NewGraph();
-  TF_OperationDescription *desc = TF_NewOperation(graph, "Placeholder", "x");
+  TF_OperationDescription *desc = TF_NewOperation(graph, "Placeholder", "g0");
   TF_SetAttrType(desc, "dtype", TF_FLOAT);
   TF_Operation *x = TF_FinishOperation(desc, status);
   CHECK(status);
 
-  TF_OperationDescription *y_desc = TF_NewOperation(graph, "Square", "y");
+  TF_OperationDescription *y_desc = TF_NewOperation(graph, "Square", "g1");
   TF_Output y_input;
   y_input.oper = x;
   y_input.index = 0;
   TF_AddInput(y_desc, y_input);
+  //TF_SetAttrType(y_desc, "T", TF_FLOAT);
   TF_Operation *y = TF_FinishOperation(y_desc, status);
   CHECK(status);
 
