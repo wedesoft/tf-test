@@ -16,7 +16,7 @@ int main(void)
     };
     for (int j=0; j<op->n_attr; j++) {
       Tensorflow__OpDef__AttrDef *attr = op->attr[j];
-      printf("  - %s\n", attr->name);
+      printf("  - %s (%s)\n", attr->name, attr->type);
     };
     for (int j=0; j<op->n_output_arg; j++) {
       Tensorflow__OpDef__ArgDef *arg = op->output_arg[j];
