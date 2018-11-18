@@ -29,6 +29,7 @@ int main() {
 
   TF_SessionOptions *opts = TF_NewSessionOptions();
   TF_Session *session = TF_NewSession(graph, opts, status);
+  TF_DeleteSessionOptions(opts);
   CHECK(status);
 
   TF_Output input;
@@ -61,7 +62,6 @@ int main() {
 
   TF_DeleteTensor(input_value);
   TF_DeleteTensor(output);
-  TF_DeleteSessionOptions(opts);
   TF_DeleteSession(session, status);
   CHECK(status);
   TF_DeleteGraph(graph);
