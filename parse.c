@@ -2,6 +2,28 @@
 #include <tensorflow/c/c_api.h>
 #include "tensorflow/core/framework/op_def.pb-c.h"
 
+void print_arg(const char *prefix, Tensorflow__OpDef__ArgDef *arg)
+{
+  const char *type;
+  const char *num = "";
+  if (*arg->type_list_attr)
+    type = arg->type_list_attr;
+  else if (*arg->number_attr) {
+    if (arg->type != TENSORFLOW__DATA_TYPE__DT_INVALID)
+      type = "tensor";
+    else
+      type = arg->type_attr;
+    num = arg->number_attr;
+  } else if (arg->type != TENSORFLOW__DATA_TYPE__DT_INVALID)
+    type = "tensor";
+  else
+    type = arg->type_attr;
+  if (*num)
+    printf(" %s %s (%s * %s)\n", prefix, arg->name, type, num);
+  else
+    printf(" %s %s (%s)\n", prefix, arg->name, type);
+}
+
 int main(void)
 {
   TF_Buffer *buffer = TF_GetAllOpList();
@@ -12,7 +34,7 @@ int main(void)
     printf("* %s\n", op->name);
     for (int j=0; j<op->n_input_arg; j++) {
       Tensorflow__OpDef__ArgDef *arg = op->input_arg[j];
-      printf("  * %s\n", arg->name);
+      print_arg(" *", arg);
     };
     for (int j=0; j<op->n_attr; j++) {
       Tensorflow__OpDef__AttrDef *attr = op->attr[j];
@@ -20,7 +42,7 @@ int main(void)
     };
     for (int j=0; j<op->n_output_arg; j++) {
       Tensorflow__OpDef__ArgDef *arg = op->output_arg[j];
-      printf(" -> %s\n", arg->name);
+      print_arg("->", arg);
     };
   };
   tensorflow__op_list__free_unpacked(op_list, NULL);
