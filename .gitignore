@@ -1,6 +1,7 @@
 tf-test
 ops
 parse
+tpl
 *.o
 *.pb
 *.pbtxt
