@@ -10,12 +10,12 @@ void print_arg(const char *prefix, Tensorflow__OpDef__ArgDef *arg)
     type = arg->type_list_attr;
   else if (*arg->number_attr) {
     if (arg->type != TENSORFLOW__DATA_TYPE__DT_INVALID)
-      type = "tensor";
+      type = "scalar";
     else
       type = arg->type_attr;
     num = arg->number_attr;
   } else if (arg->type != TENSORFLOW__DATA_TYPE__DT_INVALID)
-    type = "tensor";
+    type = "scalar";
   else
     type = arg->type_attr;
   if (*num)
